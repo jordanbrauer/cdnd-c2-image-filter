@@ -10,12 +10,14 @@ import Jimp from 'jimp'
 export async function filterImageFromURL(url: URL): Promise<ReadStream> {
     return new Promise(async (resolve, reject) => {
         const image: any = await Jimp.read(url.href).catch((error) => reject(`${error}`))
-        const path = `tmp/filtered.${Math.floor(Math.random() * Date.now())}.jpg`
-        const fqpn = `${__dirname}/${path}`
         
         if (undefined === image) {
             return
         }
+
+        const ext = url.pathname.split('.').pop();
+        const path = `tmp/filtered.${Math.floor(Math.random() * Date.now())}.${ext}`
+        const fqpn = `${__dirname}/${path}`
         
         image.resize(256, 256)
             .quality(60)
