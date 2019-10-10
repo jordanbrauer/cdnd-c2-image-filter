@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs, { ReadStream } from 'fs'
 import express, { Response, Request } from 'express'
 import bodyParser from 'body-parser'
 import {filterImageFromURL, deleteLocalFiles} from './util/util'
@@ -11,20 +11,37 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util'
     app.get("/", async (request: Request, response: Response): Promise<void> => {
         response.send("try GET /filteredimage?image_url={{}}")
     })
-    app.get("/filteredimage", async (request: Request, response: Response): Promise<void> => {
-        const url: string = request.query.image_url || ''
+    app.get("/filteredimage", async (request: Request, response: Response): Promise<any> => {
+        const reasons: any = { messages: { image_url: new Array }};
+        const validation: Array<string> = reasons.messages.image_url // NOTE: easy access
+        const source: string = request.query.image_url || ''
+        let url: URL
 
-        if (url.length <= 0) {
-            response.status(422).send({ messages: { image_url: ['This query parameter is required'] }})
+        if (!source.length) {
+            validation.push('This query parameter is required')
+        } else {
+            try {
+                url = new URL(source)
+            } catch (e) {
+                validation.push('The received value is likely a malformed URL')
+            }
         }
 
-        const fqpn = await filterImageFromURL(url)
-        const stream = fs.createReadStream(fqpn).once('close', () => {
-            stream.destroy()
-            deleteLocalFiles([fqpn])
-        })
+        if (validation.length) {
+            return response.status(422).send(reasons)
+        }
 
-        stream.pipe(response)
+        await filterImageFromURL(url)
+            .catch((error: any) => validation.push(error))
+            .then((stream: any | ReadStream) => {
+                if (validation.length) throw reasons
+
+                return stream
+            })
+            .then(
+                (stream: ReadStream) => stream.pipe(response), 
+                (errors: Object) => response.status(400).send(errors)
+            )
     })
     app.listen(port, (): void => {
         console.log(`server running on http://localhost:${port}`)
