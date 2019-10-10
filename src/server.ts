@@ -1,7 +1,7 @@
-import fs, { ReadStream } from 'fs'
+import { ReadStream } from 'fs'
 import express, { Response, Request } from 'express'
 import bodyParser from 'body-parser'
-import {filterImageFromURL, deleteLocalFiles} from './util/util'
+import { filterImageFromURL } from './util/util'
 
 (async () => {
     const app = express()
