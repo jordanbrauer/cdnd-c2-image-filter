@@ -1,46 +1,33 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import fs from 'fs'
+import express, { Response, Request } from 'express'
+import bodyParser from 'body-parser'
+import {filterImageFromURL, deleteLocalFiles} from './util/util'
 
 (async () => {
+    const app = express()
+    const port = process.env.PORT || 8082
 
-  // Init the Express application
-  const app = express();
+    app.use(bodyParser.json())
+    app.get("/", async (request: Request, response: Response): Promise<void> => {
+        response.send("try GET /filteredimage?image_url={{}}")
+    })
+    app.get("/filteredimage", async (request: Request, response: Response): Promise<void> => {
+        const url: string = request.query.image_url || ''
 
-  // Set the network port
-  const port = process.env.PORT || 8082;
-  
-  // Use the body parser middleware for post requests
-  app.use(bodyParser.json());
+        if (url.length <= 0) {
+            response.status(422).send({ messages: { image_url: ['This query parameter is required'] }})
+        }
 
-  // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
-  // GET /filteredimage?image_url={{URL}}
-  // endpoint to filter an image from a public url.
-  // IT SHOULD
-  //    1
-  //    1. validate the image_url query
-  //    2. call filterImageFromURL(image_url) to filter the image
-  //    3. send the resulting file in the response
-  //    4. deletes any files on the server on finish of the response
-  // QUERY PARAMATERS
-  //    image_url: URL of a publicly accessible image
-  // RETURNS
-  //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
+        const fqpn = await filterImageFromURL(url)
+        const stream = fs.createReadStream(fqpn).once('close', () => {
+            stream.destroy()
+            deleteLocalFiles([fqpn])
+        })
 
-  /**************************************************************************** */
-
-  //! END @TODO1
-  
-  // Root Endpoint
-  // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
-    res.send("try GET /filteredimage?image_url={{}}")
-  } );
-  
-
-  // Start the Server
-  app.listen( port, () => {
-      console.log( `server running http://localhost:${ port }` );
-      console.log( `press CTRL+C to stop server` );
-  } );
-})();
+        stream.pipe(response)
+    })
+    app.listen(port, (): void => {
+        console.log(`server running on http://localhost:${port}`)
+        console.log(`press CTRL+C to stop server`)
+    })
+})()
