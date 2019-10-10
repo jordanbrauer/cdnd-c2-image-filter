@@ -1,22 +1,33 @@
-import fs from 'fs'
+import fs, { ReadStream } from 'fs'
 import Jimp from 'jimp'
 
 /**
  * Helper function to download, filter, and save the filtered image locally.
  * 
- * @param {String} url A publicly accessible url to an image file
- * @returns {String} A promise of a string containing the absolute path to the local image
+ * @param {URL} url A publicly accessible url to an image file
+ * @returns {ReadStream} A promise of a string containing the absolute path to the local image
  */
-export async function filterImageFromURL(url: string): Promise<string> {
-    return new Promise(async (resolve) => {
-        const image = await Jimp.read(url)
+export async function filterImageFromURL(url: URL): Promise<ReadStream> {
+    return new Promise(async (resolve, reject) => {
+        const image: any = await Jimp.read(url.href).catch((error) => reject(`${error}`))
         const path = `tmp/filtered.${Math.floor(Math.random() * Date.now())}.jpg`
         const fqpn = `${__dirname}/${path}`
+        
+        if (undefined === image) {
+            return
+        }
         
         image.resize(256, 256)
             .quality(60)
             .greyscale()
-            .write(fqpn, (img: any): void => resolve(fqpn))
+            .write(fqpn, (img: any): void => {
+                const stream = fs.createReadStream(fqpn).once('close', () => {
+                    stream.destroy()
+                    deleteLocalFiles([fqpn])
+                })
+
+                resolve(stream)
+            })
     });
 }
 
