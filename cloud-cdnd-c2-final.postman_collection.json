@@ -6,14 +6,14 @@
 	},
 	"item": [
 		{
-			"name": "{{host}}/filteredimage?image_url={{url}}",
+			"name": "{{EB_URL}}/filteredimage?image_url={{url}}",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{HOST}}/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg",
+					"raw": "{{EB_URL}}/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg",
 					"host": [
-						"{{HOST}}"
+						"{{EB_URL}}"
 					],
 					"path": [
 						"filteredimage"
@@ -54,7 +54,7 @@
 	"variable": [
 		{
 			"id": "2c1fe107-0052-46e7-a6b8-bd82ce1b27cc",
-			"key": "HOST",
+			"key": "EB_URL",
 			"value": "http://jimp-brauer-dev-dev.us-east-2.elasticbeanstalk.com",
 			"type": "string"
 		}
