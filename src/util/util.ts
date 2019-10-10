@@ -4,8 +4,8 @@ import Jimp from 'jimp'
 /**
  * Helper function to download, filter, and save the filtered image locally.
  * 
- * @param {string} url A publicly accessible url to an image file
- * @returns {string} A promise of a string containing the absolute path to the local image
+ * @param {String} url A publicly accessible url to an image file
+ * @returns {String} A promise of a string containing the absolute path to the local image
  */
 export async function filterImageFromURL(url: string): Promise<string> {
     return new Promise(async (resolve) => {
@@ -16,7 +16,7 @@ export async function filterImageFromURL(url: string): Promise<string> {
         image.resize(256, 256)
             .quality(60)
             .greyscale()
-            .write(fqpn, (img) => resolve(fqpn))
+            .write(fqpn, (img: any): void => resolve(fqpn))
     });
 }
 
@@ -24,7 +24,7 @@ export async function filterImageFromURL(url: string): Promise<string> {
  * Helper function to delete files on the local disk. Useful to cleanup after
  * tasks.
  *
- * @param {string[]} files An array of absolute paths to files
+ * @param {String[]} files An array of absolute paths to files
  * @returns {void}
  */
 export async function deleteLocalFiles(files: Array<string>): Promise<void> {
