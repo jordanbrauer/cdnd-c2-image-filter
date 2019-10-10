@@ -12,7 +12,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util'
         response.send("try GET /filteredimage?image_url={{}}")
     })
     app.get("/filteredimage", async (request: Request, response: Response): Promise<any> => {
-        const reasons: any = { messages: { image_url: new Array }};
+        const reasons: any = { messages: { image_url: new Array }}
         const validation: Array<string> = reasons.messages.image_url // NOTE: easy access
         const source: string = request.query.image_url || ''
         let url: URL
@@ -32,15 +32,15 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util'
         }
 
         await filterImageFromURL(url)
-            .catch((error: any) => validation.push(error))
-            .then((stream: any | ReadStream) => {
+            .catch((error: string): void => { validation.push(error) })
+            .then((stream: ReadStream | any): ReadStream => {
                 if (validation.length) throw reasons
 
                 return stream
             })
             .then(
-                (stream: ReadStream) => stream.pipe(response), 
-                (errors: Object) => response.status(400).send(errors)
+                (stream: ReadStream): void => { stream.pipe(response) }, 
+                (errors: Object): void => { response.status(400).send(errors) }
             )
     })
     app.listen(port, (): void => {
