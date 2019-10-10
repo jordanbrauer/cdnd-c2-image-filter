@@ -1,18 +1,17 @@
 {
 	"info": {
-		"_postman_id": "4bcf1909-8996-44b7-be35-b130ab03d12f",
+		"_postman_id": "21000629-d1a2-4b29-806d-64121547f01d",
 		"name": "cloud-cdnd-c2-final",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "http://localhost:8082/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg",
+			"name": "{{host}}/filteredimage?image_url={{url}}",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://{{HOST}}/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg",
-					"protocol": "http",
+					"raw": "{{HOST}}/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg",
 					"host": [
 						"{{HOST}}"
 					],
@@ -54,10 +53,11 @@
 	],
 	"variable": [
 		{
-			"id": "1df3d31a-de30-494b-a3d0-f1228dd8713c",
+			"id": "2c1fe107-0052-46e7-a6b8-bd82ce1b27cc",
 			"key": "HOST",
-			"value": "localhost:8082",
+			"value": "http://jimp-brauer-dev-dev.us-east-2.elasticbeanstalk.com",
 			"type": "string"
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
