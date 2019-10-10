@@ -20,13 +20,15 @@ export async function filterImageFromURL(url: string): Promise<string> {
     });
 }
 
-// deleteLocalFiles
-// helper function to delete files on the local disk
-// useful to cleanup after tasks
-// INPUTS
-//    files: Array<string> an array of absolute paths to files
-export async function deleteLocalFiles(files:Array<string>){
-    for( let file of files) {
+/**
+ * Helper function to delete files on the local disk. Useful to cleanup after
+ * tasks.
+ *
+ * @param {string[]} files An array of absolute paths to files
+ * @returns {void}
+ */
+export async function deleteLocalFiles(files: Array<string>): Promise<void> {
+    for (let file of files) {
         fs.unlinkSync(file);
     }
 }
